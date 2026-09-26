@@ -1,0 +1,13 @@
+{
+  "name": "stocksense-monorepo",
+  "version": "1.0.0",
+  "description": "StockSense Inventory & Warehouse Management Platform",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix backend start",
+    "dev:backend": "npm --prefix backend dev",
+    "dev:frontend": "npm --prefix frontend dev",
+    "test": "npm --prefix backend test",
+    "build:frontend": "npm --prefix frontend build"
+  }
+}
