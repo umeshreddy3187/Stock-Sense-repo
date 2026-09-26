@@ -119,3 +119,125 @@ exports.createDelivery = (req, res, next) => {
     next(err);
   }
 };
+
+exports.pickDelivery = (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const order = DeliveryOrder.findById(id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        error: `Delivery order with ID ${id} not found`
+      });
+    }
+
+    if (order.status !== 'DRAFT') {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot pick order: current status is '${order.status}'. Order must be in 'DRAFT' status to pick.`
+      });
+    }
+
+    // Auto-fill picked quantities to requested quantities if not customized
+    const { item_picks } = req.body || {};
+    const db = require('../config/database').getDatabase();
+
+    db.exec('BEGIN TRANSACTION;');
+    try {
+      for (const item of order.items) {
+        let pickedQty = item.requested_quantity;
+        if (item_picks && item_picks[item.id] !== undefined) {
+          pickedQty = Number(item_picks[item.id]);
+          if (!Number.isInteger(pickedQty) || pickedQty < 0 || pickedQty > item.requested_quantity) {
+            db.exec('ROLLBACK;');
+            return res.status(400).json({
+              success: false,
+              error: `Invalid picked quantity for item ${item.product_name}. Must be between 0 and requested ${item.requested_quantity}`
+            });
+          }
+        }
+        DeliveryOrder.updateItemQuantities(item.id, { picked_quantity: pickedQty }, db);
+      }
+
+      DeliveryOrder.updateStatus(id, 'PICKED', null, db);
+      db.exec('COMMIT;');
+    } catch (err) {
+      db.exec('ROLLBACK;');
+      throw err;
+    }
+
+    const updatedOrder = DeliveryOrder.findById(id);
+    res.json({
+      success: true,
+      message: `Delivery order ${order.order_number} marked as PICKED`,
+      data: updatedOrder
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.packDelivery = (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const order = DeliveryOrder.findById(id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        error: `Delivery order with ID ${id} not found`
+      });
+    }
+
+    if (order.status === 'DRAFT') {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot pack order: order is still in 'DRAFT' status. You must pick the items first.`
+      });
+    }
+
+    if (order.status !== 'PICKED') {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot pack order: current status is '${order.status}'. Order must be in 'PICKED' status to pack.`
+      });
+    }
+
+    const { item_packs } = req.body || {};
+    const db = require('../config/database').getDatabase();
+
+    db.exec('BEGIN TRANSACTION;');
+    try {
+      for (const item of order.items) {
+        let packedQty = item.picked_quantity > 0 ? item.picked_quantity : item.requested_quantity;
+        if (item_packs && item_packs[item.id] !== undefined) {
+          packedQty = Number(item_packs[item.id]);
+          if (!Number.isInteger(packedQty) || packedQty < 0 || packedQty > item.requested_quantity) {
+            db.exec('ROLLBACK;');
+            return res.status(400).json({
+              success: false,
+              error: `Invalid packed quantity for item ${item.product_name}. Must be between 0 and ${item.requested_quantity}`
+            });
+          }
+        }
+        DeliveryOrder.updateItemQuantities(item.id, { packed_quantity: packedQty }, db);
+      }
+
+      DeliveryOrder.updateStatus(id, 'PACKED', null, db);
+      db.exec('COMMIT;');
+    } catch (err) {
+      db.exec('ROLLBACK;');
+      throw err;
+    }
+
+    const updatedOrder = DeliveryOrder.findById(id);
+    res.json({
+      success: true,
+      message: `Delivery order ${order.order_number} marked as PACKED`,
+      data: updatedOrder
+    });
+  } catch (err) {
+    next(err);
+  }
+};
