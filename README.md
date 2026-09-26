@@ -73,7 +73,7 @@ The StockSense platform is collaboratively engineered by two primary team member
 | **Delivery Orders** | **Jishnu** (Member 2) | `feature/member2/deliveries` | Customer fulfillment: Pick, Pack, Validate, stock deduction *(Completed)* |
 | **Internal Transfers** | **Jishnu** (Member 2) | `feature/member2/transfers` | Inter-warehouse stock relocations with transit tracking |
 | **Stock Adjustments** | **Jishnu** (Member 2) | `feature/member2/adjustments` | Inventory cycle counting, physical audits, shrinkage write-offs |
-| **Analytics Dashboard** | **Jishnu** (Member 2) | `feature/member2/dashboard` | Real-time KPI metrics, low-stock alerts, turnover rates, operational stats |
+| **Analytics Dashboard** | **Jishnu** (Member 2) | `feature/member2/dashboard` | Real-time KPI metrics, low-stock alerts, turnover rates, operational stats *(Completed & Verified)* |
 | **Stock Ledger (Shared)** | **Collaborative** | `feature/shared/stock-ledger` | Immutable audit log recording every inventory movement across all modules |
 | **System Integration** | **Collaborative** | `feature/shared/integration` | End-to-end integration, unified routing, shared middleware, and deployment |
 
@@ -275,6 +275,20 @@ CREATE TABLE stock_ledger (
 | Method | Endpoint | Description |
 |---|---|---|
 | `GET` | `/api/stock-ledger` | Retrieve audit trail of all inventory movements |
+
+### Inventory Dashboard (`/api/dashboard`)
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/dashboard/summary` | Aggregate KPI statistics (total products, stock quantity, low-stock count, out-of-stock count, movements count, and delivery orders summary). Supports `?warehouseId=`, `?category=`, and `?timeRange=` |
+| `GET` | `/api/dashboard/inventory` | Inventory breakdown by category, warehouse allocation, and catalog health ratios |
+| `GET` | `/api/dashboard/warehouses` | Warehouse-by-warehouse facilities summary with SKU counts, total stock units, and low/out-of-stock alerts |
+| `GET` | `/api/dashboard/movements` | Stock movement analytics, inbound/outbound totals, net flow, daily timeline, and paginated recent activities. Supports `?timeRange=`, `?movementType=`, `?warehouseId=`, `?limit=`, and `?offset=` |
+| `GET` | `/api/dashboard/low-stock` | Actionable low-stock and out-of-stock items requiring replenishment, with reorder deficit values. Supports `?warehouseId=`, `?category=`, and `?status=` |
+
+### Warehouses (`/api/warehouses`)
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/warehouses` | List all operating warehouse facilities and location codes |
 
 ---
 

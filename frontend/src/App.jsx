@@ -1,11 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from './components/Navbar';
+import InventoryDashboard from './components/InventoryDashboard';
 import CreateDeliveryModal from './components/CreateDeliveryModal';
 import DeliveryOrderDetailModal from './components/DeliveryOrderDetailModal';
 import StockLedgerModal from './components/StockLedgerModal';
 import { fetchDeliveries, fetchProducts, fetchDeliveryById } from './services/api';
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.pathname === '/deliveries') {
+      return 'deliveries';
+    }
+    return 'dashboard';
+  });
+
   const [deliveries, setDeliveries] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -97,26 +105,32 @@ export default function App() {
   return (
     <div className="app-container">
       <Navbar 
+        activeTab={activeTab}
+        onSelectTab={setActiveTab}
         onOpenCreate={() => setIsCreateOpen(true)}
         onOpenLedger={() => setIsLedgerOpen(true)}
       />
 
       <main className="main-content">
-        {/* Page Title & Quick Actions */}
-        <div className="page-header">
-          <div className="header-title-area">
-            <h1>Delivery Orders Fulfillment</h1>
-            <p>Manage outbound delivery fulfillment lifecycle: Draft &rarr; Pick &rarr; Pack &rarr; Validate &rarr; Stock Ledger Decrement.</p>
-          </div>
-          <div className="header-buttons">
-            <button className="btn btn-secondary" onClick={loadData}>
-              <span>🔄</span> Refresh
-            </button>
-            <button className="btn btn-primary" onClick={() => setIsCreateOpen(true)}>
-              <span>➕</span> New Delivery Order
-            </button>
-          </div>
-        </div>
+        {activeTab === 'dashboard' ? (
+          <InventoryDashboard notify={addToast} />
+        ) : (
+          <>
+            {/* Page Title & Quick Actions */}
+            <div className="page-header">
+              <div className="header-title-area">
+                <h1>Delivery Orders Fulfillment</h1>
+                <p>Manage outbound delivery fulfillment lifecycle: Draft &rarr; Pick &rarr; Pack &rarr; Validate &rarr; Stock Ledger Decrement.</p>
+              </div>
+              <div className="header-buttons">
+                <button className="btn btn-secondary" onClick={loadData}>
+                  <span>🔄</span> Refresh
+                </button>
+                <button className="btn btn-primary" onClick={() => setIsCreateOpen(true)}>
+                  <span>➕</span> New Delivery Order
+                </button>
+              </div>
+            </div>
 
         {/* Real-time KPI Stats Cards */}
         <div className="stats-grid">
@@ -249,6 +263,8 @@ export default function App() {
             </table>
           )}
         </div>
+        </>
+        )}
       </main>
 
       {/* Create Delivery Modal */}

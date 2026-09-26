@@ -4,27 +4,48 @@ class Product {
   static findAll(customDb) {
     const db = customDb || getDatabase();
     return db.prepare(`
-      SELECT id, sku, name, category, current_stock, unit, created_at, updated_at
-      FROM products
-      ORDER BY name ASC
+      SELECT 
+        p.id, p.sku, p.name, p.category, p.current_stock, 
+        COALESCE(p.min_stock, 15) as min_stock, 
+        p.warehouse_id,
+        w.name as warehouse_name,
+        w.code as warehouse_code,
+        p.unit, p.created_at, p.updated_at
+      FROM products p
+      LEFT JOIN warehouses w ON p.warehouse_id = w.id
+      ORDER BY p.name ASC
     `).all();
   }
 
   static findById(id, customDb) {
     const db = customDb || getDatabase();
     return db.prepare(`
-      SELECT id, sku, name, category, current_stock, unit, created_at, updated_at
-      FROM products
-      WHERE id = ?
+      SELECT 
+        p.id, p.sku, p.name, p.category, p.current_stock, 
+        COALESCE(p.min_stock, 15) as min_stock, 
+        p.warehouse_id,
+        w.name as warehouse_name,
+        w.code as warehouse_code,
+        p.unit, p.created_at, p.updated_at
+      FROM products p
+      LEFT JOIN warehouses w ON p.warehouse_id = w.id
+      WHERE p.id = ?
     `).get(id);
   }
 
   static findBySku(sku, customDb) {
     const db = customDb || getDatabase();
     return db.prepare(`
-      SELECT id, sku, name, category, current_stock, unit, created_at, updated_at
-      FROM products
-      WHERE sku = ?
+      SELECT 
+        p.id, p.sku, p.name, p.category, p.current_stock, 
+        COALESCE(p.min_stock, 15) as min_stock, 
+        p.warehouse_id,
+        w.name as warehouse_name,
+        w.code as warehouse_code,
+        p.unit, p.created_at, p.updated_at
+      FROM products p
+      LEFT JOIN warehouses w ON p.warehouse_id = w.id
+      WHERE p.sku = ?
     `).get(sku);
   }
 

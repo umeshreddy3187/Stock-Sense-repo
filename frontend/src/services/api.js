@@ -88,3 +88,77 @@ export async function fetchStockLedger(filters = {}) {
   const data = await res.json();
   return data.data;
 }
+
+export async function fetchWarehouses() {
+  const res = await fetch(`${API_BASE}/warehouses`);
+  if (!res.ok) throw new Error('Failed to fetch warehouses');
+  const data = await res.json();
+  return data.data;
+}
+
+export async function fetchDashboardSummary(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.warehouseId) params.append('warehouseId', filters.warehouseId);
+  if (filters.category && filters.category !== 'ALL') params.append('category', filters.category);
+  if (filters.timeRange) params.append('timeRange', filters.timeRange);
+  if (filters.startDate) params.append('startDate', filters.startDate);
+  if (filters.endDate) params.append('endDate', filters.endDate);
+
+  const queryStr = params.toString() ? `?${params.toString()}` : '';
+  const res = await fetch(`${API_BASE}/dashboard/summary${queryStr}`);
+  if (!res.ok) throw new Error('Failed to fetch dashboard summary');
+  const data = await res.json();
+  return data.data;
+}
+
+export async function fetchInventoryOverview(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.warehouseId) params.append('warehouseId', filters.warehouseId);
+  const queryStr = params.toString() ? `?${params.toString()}` : '';
+
+  const res = await fetch(`${API_BASE}/dashboard/inventory${queryStr}`);
+  if (!res.ok) throw new Error('Failed to fetch inventory overview');
+  const data = await res.json();
+  return data.data;
+}
+
+export async function fetchWarehouseOverview(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.warehouseId) params.append('warehouseId', filters.warehouseId);
+  const queryStr = params.toString() ? `?${params.toString()}` : '';
+
+  const res = await fetch(`${API_BASE}/dashboard/warehouses${queryStr}`);
+  if (!res.ok) throw new Error('Failed to fetch warehouse overview');
+  const data = await res.json();
+  return data.data;
+}
+
+export async function fetchMovementAnalytics(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.timeRange) params.append('timeRange', filters.timeRange);
+  if (filters.warehouseId) params.append('warehouseId', filters.warehouseId);
+  if (filters.movementType && filters.movementType !== 'ALL') params.append('movementType', filters.movementType);
+  if (filters.startDate) params.append('startDate', filters.startDate);
+  if (filters.endDate) params.append('endDate', filters.endDate);
+  if (filters.limit) params.append('limit', filters.limit);
+  if (filters.offset) params.append('offset', filters.offset);
+
+  const queryStr = params.toString() ? `?${params.toString()}` : '';
+  const res = await fetch(`${API_BASE}/dashboard/movements${queryStr}`);
+  if (!res.ok) throw new Error('Failed to fetch movement analytics');
+  const data = await res.json();
+  return data.data;
+}
+
+export async function fetchLowStockProducts(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.warehouseId) params.append('warehouseId', filters.warehouseId);
+  if (filters.category && filters.category !== 'ALL') params.append('category', filters.category);
+  if (filters.status && filters.status !== 'ALL') params.append('status', filters.status);
+
+  const queryStr = params.toString() ? `?${params.toString()}` : '';
+  const res = await fetch(`${API_BASE}/dashboard/low-stock${queryStr}`);
+  if (!res.ok) throw new Error('Failed to fetch low stock products');
+  const data = await res.json();
+  return data.data;
+}
