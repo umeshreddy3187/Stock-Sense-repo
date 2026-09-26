@@ -4,12 +4,13 @@ node_modules/
 .pnp.js
 
 # SQLite database files
-data/*.db
-data/*.db-journal
-data/*.db-wal
-data/*.db-shm
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
 *.sqlite
 *.sqlite3
+**/data/
 
 # Production build
 dist/

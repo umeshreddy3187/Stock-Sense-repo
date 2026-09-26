@@ -1,0 +1,121 @@
+const DeliveryOrder = require('../models/DeliveryOrder');
+const Product = require('../models/Product');
+
+exports.getDeliveries = (req, res, next) => {
+  try {
+    const { status } = req.query;
+    const filter = {};
+    if (status) {
+      filter.status = status.toUpperCase();
+    }
+    const deliveries = DeliveryOrder.findAll(filter);
+    res.json({
+      success: true,
+      data: deliveries
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getDeliveryById = (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const order = DeliveryOrder.findById(id);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        error: `Delivery order with ID ${id} not found`
+      });
+    }
+    res.json({
+      success: true,
+      data: order
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.createDelivery = (req, res, next) => {
+  try {
+    const { customer_name, destination_address, notes, items } = req.body;
+
+    // 1. Validate required customer_name
+    if (!customer_name || typeof customer_name !== 'string' || customer_name.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        error: 'Customer name is required and cannot be empty'
+      });
+    }
+
+    // 2. Validate items array
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'At least one product item is required for a delivery order'
+      });
+    }
+
+    // 3. Validate each item
+    const sanitizedItems = [];
+    const productAggregates = new Map(); // track duplicate products in single order
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const productId = Number(item.product_id);
+      const requestedQty = Number(item.requested_quantity);
+
+      if (!productId || isNaN(productId)) {
+        return res.status(400).json({
+          success: false,
+          error: `Item at index ${i} has invalid product_id`
+        });
+      }
+
+      if (!Number.isInteger(requestedQty) || requestedQty <= 0) {
+        return res.status(400).json({
+          success: false,
+          error: `Quantity for item at index ${i} must be a positive integer greater than zero`
+        });
+      }
+
+      const product = Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          error: `Product with ID ${productId} does not exist`
+        });
+      }
+
+      const totalRequestedForProd = (productAggregates.get(productId) || 0) + requestedQty;
+      if (totalRequestedForProd > product.current_stock) {
+        return res.status(400).json({
+          success: false,
+          error: `Insufficient stock for product "${product.name}" (SKU: ${product.sku}). Requested: ${totalRequestedForProd}, Available: ${product.current_stock}`
+        });
+      }
+
+      productAggregates.set(productId, totalRequestedForProd);
+      sanitizedItems.push({
+        product_id: productId,
+        requested_quantity: requestedQty
+      });
+    }
+
+    const order = DeliveryOrder.create({
+      customer_name: customer_name.trim(),
+      destination_address: destination_address ? destination_address.trim() : null,
+      notes: notes ? notes.trim() : null,
+      items: sanitizedItems
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Delivery order created successfully',
+      data: order
+    });
+  } catch (err) {
+    next(err);
+  }
+};
