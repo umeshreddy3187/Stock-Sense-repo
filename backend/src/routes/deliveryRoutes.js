@@ -7,5 +7,6 @@ router.get('/:id', deliveryController.getDeliveryById);
 router.post('/', deliveryController.createDelivery);
 router.post('/:id/pick', deliveryController.pickDelivery);
 router.post('/:id/pack', deliveryController.packDelivery);
+router.post('/:id/validate', deliveryController.validateDelivery);
 
 module.exports = router;
