@@ -4,6 +4,10 @@ import InventoryDashboard from './components/InventoryDashboard';
 import CreateDeliveryModal from './components/CreateDeliveryModal';
 import DeliveryOrderDetailModal from './components/DeliveryOrderDetailModal';
 import StockLedgerModal from './components/StockLedgerModal';
+import ProductsView from './components/ProductsView';
+import ReceiptsView from './components/ReceiptsView';
+import TransfersView from './components/TransfersView';
+import WarehousesView from './components/WarehousesView';
 import { fetchDeliveries, fetchProducts, fetchDeliveryById } from './services/api';
 
 export default function App() {
@@ -114,6 +118,14 @@ export default function App() {
       <main className="main-content">
         {activeTab === 'dashboard' ? (
           <InventoryDashboard notify={addToast} />
+        ) : activeTab === 'products' ? (
+          <ProductsView notify={addToast} />
+        ) : activeTab === 'receipts' ? (
+          <ReceiptsView notify={addToast} />
+        ) : activeTab === 'transfers' ? (
+          <TransfersView notify={addToast} />
+        ) : activeTab === 'warehouses' ? (
+          <WarehousesView notify={addToast} />
         ) : (
           <>
             {/* Page Title & Quick Actions */}

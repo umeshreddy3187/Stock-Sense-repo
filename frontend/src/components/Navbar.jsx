@@ -11,7 +11,7 @@ export default function Navbar({ activeTab, onSelectTab, onOpenCreate, onOpenLed
         </div>
 
         {/* View Switcher Tabs */}
-        <nav style={{ display: 'flex', gap: '0.4rem', marginLeft: '1.5rem' }}>
+        <nav style={{ display: 'flex', gap: '0.4rem', marginLeft: '1.5rem', flexWrap: 'wrap' }}>
           <button
             type="button"
             className={`tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
@@ -20,7 +20,7 @@ export default function Navbar({ activeTab, onSelectTab, onOpenCreate, onOpenLed
             style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
           >
             <span>📊</span>
-            <span>Inventory Dashboard</span>
+            <span>Dashboard</span>
           </button>
 
           <button
@@ -31,15 +31,59 @@ export default function Navbar({ activeTab, onSelectTab, onOpenCreate, onOpenLed
             style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
           >
             <span>📦</span>
-            <span>Delivery Orders</span>
+            <span>Deliveries</span>
+          </button>
+
+          <button
+            type="button"
+            className={`tab-btn ${activeTab === 'products' ? 'active' : ''}`}
+            onClick={() => onSelectTab('products')}
+            id="nav-tab-products"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
+          >
+            <span>🏷️</span>
+            <span>Products</span>
+          </button>
+
+          <button
+            type="button"
+            className={`tab-btn ${activeTab === 'receipts' ? 'active' : ''}`}
+            onClick={() => onSelectTab('receipts')}
+            id="nav-tab-receipts"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
+          >
+            <span>📥</span>
+            <span>Receipts</span>
+          </button>
+
+          <button
+            type="button"
+            className={`tab-btn ${activeTab === 'transfers' ? 'active' : ''}`}
+            onClick={() => onSelectTab('transfers')}
+            id="nav-tab-transfers"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
+          >
+            <span>🚚</span>
+            <span>Transfers & Audits</span>
+          </button>
+
+          <button
+            type="button"
+            className={`tab-btn ${activeTab === 'warehouses' ? 'active' : ''}`}
+            onClick={() => onSelectTab('warehouses')}
+            id="nav-tab-warehouses"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
+          >
+            <span>🏢</span>
+            <span>Warehouses</span>
           </button>
         </nav>
       </div>
 
       <div className="nav-actions">
-        <div className="member-chip" title="Active developer branch">
+        <div className="member-chip" title="System Status: Connected">
           <span className="pulse-dot"></span>
-          <span>MEMBER 2 (Jishnu) &bull; feature/member2/dashboard</span>
+          <span>StockSense Platform &bull; Production v1.0.0</span>
         </div>
 
         <button 

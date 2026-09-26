@@ -162,3 +162,118 @@ export async function fetchLowStockProducts(filters = {}) {
   const data = await res.json();
   return data.data;
 }
+
+export async function createProduct(payload) {
+  const res = await fetch(`${API_BASE}/products`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Failed to create product');
+  return data.data;
+}
+
+export async function updateProduct(id, payload) {
+  const res = await fetch(`${API_BASE}/products/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Failed to update product');
+  return data.data;
+}
+
+export async function deleteProduct(id) {
+  const res = await fetch(`${API_BASE}/products/${id}`, { method: 'DELETE' });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Failed to delete product');
+  return data;
+}
+
+export async function createWarehouse(payload) {
+  const res = await fetch(`${API_BASE}/warehouses`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Failed to create warehouse');
+  return data.data;
+}
+
+export async function fetchReceipts() {
+  const res = await fetch(`${API_BASE}/receipts`);
+  if (!res.ok) throw new Error('Failed to fetch receipts');
+  const data = await res.json();
+  return data.data;
+}
+
+export async function createReceipt(payload) {
+  const res = await fetch(`${API_BASE}/receipts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Failed to create receipt');
+  return data.data;
+}
+
+export async function receiveReceipt(id) {
+  const res = await fetch(`${API_BASE}/receipts/${id}/receive`, { method: 'POST' });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Failed to receive order');
+  return data.data;
+}
+
+export async function fetchTransfers() {
+  const res = await fetch(`${API_BASE}/transfers`);
+  if (!res.ok) throw new Error('Failed to fetch transfers');
+  const data = await res.json();
+  return data.data;
+}
+
+export async function createTransfer(payload) {
+  const res = await fetch(`${API_BASE}/transfers`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Failed to create transfer');
+  return data.data;
+}
+
+export async function dispatchTransfer(id) {
+  const res = await fetch(`${API_BASE}/transfers/${id}/dispatch`, { method: 'POST' });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Failed to dispatch transfer');
+  return data.data;
+}
+
+export async function completeTransfer(id) {
+  const res = await fetch(`${API_BASE}/transfers/${id}/complete`, { method: 'POST' });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Failed to complete transfer');
+  return data.data;
+}
+
+export async function fetchAdjustments() {
+  const res = await fetch(`${API_BASE}/adjustments`);
+  if (!res.ok) throw new Error('Failed to fetch adjustments');
+  const data = await res.json();
+  return data.data;
+}
+
+export async function createAdjustment(payload) {
+  const res = await fetch(`${API_BASE}/adjustments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Failed to create adjustment');
+  return data.data;
+}

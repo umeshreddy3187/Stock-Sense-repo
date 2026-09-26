@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockSense — Intelligent Inventory Management System</title>
+  <meta name="description" content="Centralized Inventory Management System for products, stock movements, multi-warehouse operations, and supplier receipts.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/products.css">
+  <link rel="stylesheet" href="css/warehouse.css">
+  <link rel="stylesheet" href="css/receipts.css">
+  <link rel="stylesheet" href="css/operations.css">
+</head>
+<body>
+
+<div id="app-container">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand-header">
+      <div class="brand-logo-icon">SS</div>
+      <div class="brand-text">
+        <h1>StockSense</h1>
+        <div class="brand-tag">Online &bull; v1.0</div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-section">
+      <div class="nav-section-title">
+        <span>Overview</span>
+        <span class="badge-owner">Live</span>
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <button type="button" data-view="dashboard" class="active" id="nav-btn-dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>Dashboard & KPIs</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="nav-section-title" style="margin-top: 1.25rem;">
+        <span>Inbound Operations</span>
+        <span class="badge-owner">Inbound</span>
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <button type="button" data-view="products" id="nav-btn-products">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            <span>Product Catalog</span>
+            <span class="nav-badge" id="nav-badge-products">6</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" data-view="warehouses" id="nav-btn-warehouses">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>Warehouses & Zones</span>
+            <span class="nav-badge">3</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" data-view="receipts" id="nav-btn-receipts">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"></polyline><path d="M4 4h16v16H4z" stroke-dasharray="2 2" fill="none"></path></svg>
+            <span>Receipts & Stock In</span>
+            <span class="nav-badge alert" id="nav-badge-receipts">2</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="nav-section-title" style="margin-top: 1.25rem;">
+        <span>Outbound Logistics</span>
+        <span class="badge-owner">Fulfillment</span>
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <button type="button" data-view="deliveries" id="nav-btn-deliveries">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+            <span>Delivery Orders</span>
+            <span class="nav-badge" id="nav-badge-deliveries">4</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" data-view="transfers" id="nav-btn-transfers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+            <span>Internal Transfers</span>
+            <span class="nav-badge">3</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" data-view="adjustments" id="nav-btn-adjustments">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            <span>Stock Adjustments</span>
+            <span class="nav-badge">2</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="nav-section-title" style="margin-top: 1.25rem;">
+        <span>Audit & Ledger</span>
+        <span class="badge-owner">Shared</span>
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <button type="button" data-view="ledger" id="nav-btn-ledger">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Stock Ledger</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Sidebar Footer Profile -->
+    <div class="sidebar-footer">
+      <div class="user-profile-badge" onclick="Auth.showAuthModal('login')" title="Click to Switch User / Profile">
+        <img id="user-display-avatar" class="user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Avatar">
+        <div class="user-info">
+          <div class="user-name" id="user-display-name">Alex Morgan</div>
+          <div class="user-role" id="user-display-role">Inventory Manager</div>
+        </div>
+        <button type="button" class="btn-icon-signout" id="btn-signout" title="Sign Out">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-title-group">
+        <h2 id="topbar-page-title">Executive Overview</h2>
+        <div class="topbar-subtitle" id="topbar-page-sub">Real-time stock analytics & inventory health</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="module-status-chip">
+          <span style="width: 8px; height: 8px; background: var(--emerald); border-radius: 50%; box-shadow: 0 0 6px var(--emerald);"></span>
+          <span>Role: Operations & Inventory Manager</span>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-demo-data" title="Reset sample database to default values">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 2v6h6M21.5 22v-6h-6"/><path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2"/></svg>
+          Reset Demo Data
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="Receipts.openCreateModal()" id="btn-topbar-quick-receipt">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          New Inward Receipt
+        </button>
+      </div>
+    </header>
+
+    <!-- VIEW 1: DASHBOARD -->
+    <main class="page-view" id="view-dashboard">
+      <!-- Dashboard Filters Strip -->
+      <div class="products-header-actions" style="margin-bottom: 1.5rem;">
+        <div class="filter-bar">
+          <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.4rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+            <span>Analytics Scope:</span>
+          </div>
+          <select class="form-select" id="dash-filter-warehouse" style="width: 220px;" onchange="App.updateDashboardCounters()">
+            <option value="">All Warehouse Facilities</option>
+            <option value="wh-blr-01">Central Bangalore Hub</option>
+            <option value="wh-del-02">Northern Distribution Depot</option>
+            <option value="wh-mum-03">Western Transit Terminal</option>
+          </select>
+          <select class="form-select" id="dash-filter-category" style="width: 200px;" onchange="App.updateDashboardCounters()">
+            <option value="">All Product Categories</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="App.switchView('transfers')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path></svg>
+            Internal Relocations
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="Deliveries.openCreateModal()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            New Delivery Order
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Metrics Grid -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Catalog Products</span>
+            <div class="metric-icon-box primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metric-total-products">6</div>
+          <div class="metric-footer">
+            <span class="trend-up">&uarr; 100% SKU Tracked</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Low Stock Alerts</span>
+            <div class="metric-icon-box rose">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metric-low-stock">2</div>
+          <div class="metric-footer">
+            <span class="trend-down">Requires Purchase PO</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Warehouse Hubs</span>
+            <div class="metric-icon-box cyan">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metric-total-warehouses">3</div>
+          <div class="metric-footer">
+            <span style="color: var(--cyan);">11 Storage Zones</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Inward Receipts</span>
+            <div class="metric-icon-box amber">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metric-pending-receipts">2</div>
+          <div class="metric-footer">
+            <span style="color: var(--amber);">Awaiting Stock-In</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Active Deliveries</span>
+            <div class="metric-icon-box primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metric-active-deliveries">3</div>
+          <div class="metric-footer">
+            <span style="color: #818cf8;">In Fulfillment Pipeline</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Stock Valuation</span>
+            <div class="metric-icon-box emerald">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metric-total-value">$46,550.00</div>
+          <div class="metric-footer">
+            <span class="trend-up">&uarr; Inventory Asset Value</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Cards Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Low Stock Action Board -->
+        <div class="glass-panel" style="margin-bottom: 0;">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+              <span>Items Needing Restock</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="App.switchView('products')">View All</button>
+          </div>
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Stock / Reorder</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="dash-critical-stock">
+                <!-- Injected via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Recent Inward Deliveries -->
+        <div class="glass-panel" style="margin-bottom: 0;">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Recent Inbound Receipts</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="App.switchView('receipts')">View All</button>
+          </div>
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Receipt #</th>
+                  <th>Supplier</th>
+                  <th>Items</th>
+                  <th>Status</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="dash-recent-receipts">
+                <!-- Injected via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Recent Customer Deliveries -->
+        <div class="glass-panel" style="margin-bottom: 0;">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon></svg>
+              <span>Recent Outbound Deliveries</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="App.switchView('deliveries')">View All</button>
+          </div>
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Order #</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Stage</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="dash-recent-deliveries">
+                <!-- Injected via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- VIEW 2: PRODUCT MANAGEMENT -->
+    <main class="page-view hidden" id="view-products">
+      <div class="products-header-actions">
+        <div class="filter-bar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" class="form-input" id="search-products" placeholder="Search product name, SKU, barcode...">
+          </div>
+          <select class="form-select" id="filter-product-category" style="width: 220px;">
+            <option value="">All Categories</option>
+          </select>
+          <select class="form-select" id="filter-product-stock" style="width: 170px;">
+            <option value="">All Stock Levels</option>
+            <option value="healthy">In Stock Only</option>
+            <option value="low">Low Stock Alerts</option>
+            <option value="out">Out of Stock</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+          <button type="button" class="btn btn-secondary" id="btn-export-products">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Export CSV
+          </button>
+          <button type="button" class="btn btn-primary" onclick="Products.openAddModal()" id="btn-add-product">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add New Product
+          </button>
+        </div>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Product Details</th>
+              <th>SKU Code</th>
+              <th>Category</th>
+              <th>Available Stock</th>
+              <th>Cost / Retail</th>
+              <th>Warehouse & Bay</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="products-table-body">
+            <!-- Rendered by products.js -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- VIEW 3: WAREHOUSE MANAGEMENT -->
+    <main class="page-view hidden" id="view-warehouses">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h3 style="font-size: 1.2rem; font-weight: 700;">Storage Facilities & Distribution Hubs</h3>
+          <p style="font-size: 0.8rem; color: var(--text-dim);">Select a warehouse card below to drill down into its zone racks and item inventory.</p>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="Warehouses.openAddModal()" id="btn-add-warehouse">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add Warehouse Facility
+        </button>
+      </div>
+
+      <!-- Warehouse Card Grid -->
+      <div class="warehouse-grid" id="warehouses-grid">
+        <!-- Rendered by warehouse.js -->
+      </div>
+
+      <!-- Selected Warehouse Drill-Down -->
+      <div class="glass-panel locations-container">
+        <div class="panel-header">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <h3 id="selected-wh-name" style="font-size: 1.2rem; font-weight: 700;">Central Bangalore Hub</h3>
+              <span class="warehouse-code-badge" id="selected-wh-code">WH-BLR-01</span>
+            </div>
+            <div id="selected-wh-address" style="font-size: 0.775rem; color: var(--text-dim); margin-top: 0.2rem;">Plot 42, Electronic City Phase 2</div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="Warehouses.openAddLocationModal()" id="btn-add-location">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Storage Location / Bin
+          </button>
+        </div>
+
+        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-dim); font-weight: 700; margin-bottom: 0.75rem;">
+          Filter by Warehouse Zone / Bay:
+        </div>
+        <div class="location-chip-grid" id="location-chips">
+          <!-- Rendered by warehouse.js -->
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>SKU</th>
+                <th>Assigned Zone / Bin</th>
+                <th>Stock Quantity</th>
+                <th>Valuation</th>
+                <th>Inward Action</th>
+              </tr>
+            </thead>
+            <tbody id="stock-location-table-body">
+              <!-- Rendered by warehouse.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- VIEW 4: RECEIPTS & INWARD -->
+    <main class="page-view hidden" id="view-receipts">
+      <div class="products-header-actions">
+        <div class="filter-bar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" class="form-input" id="search-receipts" placeholder="Search receipt #, supplier, PO ref...">
+          </div>
+          <select class="form-select" id="filter-receipt-status" style="width: 200px;">
+            <option value="">All Statuses</option>
+            <option value="Received">Received (Stocked In)</option>
+            <option value="Pending Inspection">Pending Inspection</option>
+            <option value="Draft">Draft</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="Receipts.openCreateModal()" id="btn-create-receipt">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Create Inward Receipt
+        </button>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Receipt & PO #</th>
+              <th>Supplier & Date</th>
+              <th>Destination Hub</th>
+              <th>Quantity Received</th>
+              <th>Total Value</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="receipts-table-body">
+            <!-- Rendered by receipts.js -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- VIEW 5: STOCK LEDGER AUDIT TRAIL -->
+    <main class="page-view hidden" id="view-ledger">
+      <div class="products-header-actions">
+        <div class="search-box" style="min-width: 320px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" class="form-input" id="search-ledger" placeholder="Filter ledger by SKU, product, reference, hub...">
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-dim);">
+          Shared Movement History (Inbound Receipts, Outbound Deliveries & Transfers)
+        </div>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Reference #</th>
+              <th>Product & SKU</th>
+              <th>Location</th>
+              <th>Change</th>
+              <th>Balance</th>
+              <th>Remarks & Operator</th>
+            </tr>
+          </thead>
+          <tbody id="ledger-table-body">
+            <!-- Rendered by app.js Ledger -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- VIEW 6: DELIVERY ORDERS (OUTBOUND FULFILLMENT) -->
+    <main class="page-view hidden" id="view-deliveries">
+      <div class="products-header-actions">
+        <div class="filter-bar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" class="form-input" id="search-deliveries" placeholder="Search order #, customer, destination...">
+          </div>
+          <select class="form-select" id="filter-delivery-status" style="width: 200px;">
+            <option value="">All Fulfillment Stages</option>
+            <option value="DRAFT">Draft</option>
+            <option value="PICKED">Picked</option>
+            <option value="PACKED">Packed</option>
+            <option value="VALIDATED">Validated (Dispatched)</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="Deliveries.openCreateModal()" id="btn-create-delivery">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          New Delivery Order
+        </button>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order # & Date</th>
+              <th>Customer & Destination</th>
+              <th>Quantity Ordered</th>
+              <th>Order Total</th>
+              <th>Current Status</th>
+              <th>Fulfillment Pipeline</th>
+              <th>Stage Action</th>
+            </tr>
+          </thead>
+          <tbody id="deliveries-table-body">
+            <!-- Rendered by deliveries.js -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- VIEW 7: INTERNAL TRANSFERS -->
+    <main class="page-view hidden" id="view-transfers">
+      <div class="products-header-actions">
+        <div class="filter-bar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" class="form-input" id="search-transfers" placeholder="Search transfer #, source, destination...">
+          </div>
+          <select class="form-select" id="filter-transfer-status" style="width: 200px;">
+            <option value="">All Transfer Statuses</option>
+            <option value="DRAFT">Draft</option>
+            <option value="IN_TRANSIT">In-Transit</option>
+            <option value="COMPLETED">Completed</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="Transfers.openCreateModal()" id="btn-create-transfer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Initiate Relocation Transfer
+        </button>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Transfer Reference</th>
+              <th>Relocation Route</th>
+              <th>Items & Quantity</th>
+              <th>Transit Status</th>
+              <th>Manifest Notes</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="transfers-table-body">
+            <!-- Rendered by transfers.js -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- VIEW 8: INVENTORY ADJUSTMENTS -->
+    <main class="page-view hidden" id="view-adjustments">
+      <div class="products-header-actions">
+        <div class="filter-bar">
+          <div class="search-box" style="min-width: 320px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" class="form-input" id="search-adjustments" placeholder="Search adjustment #, product, audit reason...">
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="Adjustments.openCreateModal()" id="btn-create-adjustment">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Record Stock Adjustment
+        </button>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Audit Reference</th>
+              <th>Product & SKU</th>
+              <th>Warehouse Facility</th>
+              <th>System Stock</th>
+              <th>Physical Count</th>
+              <th>Audit Variance</th>
+              <th>Reconciliation Justification</th>
+            </tr>
+          </thead>
+          <tbody id="adjustments-table-body">
+            <!-- Rendered by adjustments.js -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     MODALS
+     ========================================================================== -->
+
+<!-- 1. AUTHENTICATION MODAL -->
+<div class="auth-overlay-view" id="auth-modal" style="display: none;">
+  <div class="auth-container">
+    <div class="auth-header">
+      <div class="auth-brand-badge">StockSense Authentication</div>
+      <h2 class="auth-title">Welcome to StockSense</h2>
+      <p class="auth-subtitle">Centralized Enterprise Inventory & Movement Tracking</p>
+    </div>
+
+    <!-- Login Form -->
+    <div class="auth-form-card active" id="auth-form-login">
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email Address</label>
+          <input type="email" id="login-email" class="form-input" placeholder="alex@stocksense.io" required value="alex@stocksense.io">
+        </div>
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="form-label" for="login-password">Password</label>
+            <a href="javascript:void(0)" class="auth-link" onclick="Auth.showAuthForm('forgot')">Forgot Password? (OTP)</a>
+          </div>
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required value="password123">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;" id="btn-submit-login">Sign In</button>
+      </form>
+
+      <div class="auth-links">
+        <span style="color: var(--text-dim);">Don't have an account?</span>
+        <a href="javascript:void(0)" class="auth-link" onclick="Auth.showAuthForm('register')">Register New Account</a>
+      </div>
+
+      <!-- Quick Login Demo Buttons -->
+      <div class="auth-quick-logins">
+        <div class="quick-login-label">Instant Demo Profiles:</div>
+        <div class="quick-login-grid">
+          <button type="button" class="btn-quick-user" data-quick-login="alex@stocksense.io">
+            <strong>Alex Morgan</strong>
+            <span>Inv. Manager</span>
+          </button>
+          <button type="button" class="btn-quick-user" data-quick-login="sarah@stocksense.io">
+            <strong>Sarah Chen</strong>
+            <span>Ops Lead</span>
+          </button>
+          <button type="button" class="btn-quick-user" data-quick-login="sarah@stocksense.io">
+            <strong>Sarah Connor</strong>
+            <span>Supervisor</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="auth-form-card" id="auth-form-register">
+      <form id="register-form">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" class="form-input" placeholder="e.g. Alex Morgan" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address</label>
+          <input type="email" id="reg-email" class="form-input" placeholder="you@stocksense.io" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password</label>
+            <input type="password" id="reg-password" class="form-input" placeholder="Min 6 characters" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-confirm-password">Confirm</label>
+            <input type="password" id="reg-confirm-password" class="form-input" placeholder="Repeat password" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-role">Role</label>
+          <select id="reg-role" class="form-select">
+            <option value="Inventory Manager">Inventory Manager</option>
+            <option value="Warehouse Supervisor">Warehouse Supervisor</option>
+            <option value="Operations Lead">Operations Lead</option>
+            <option value="Stock Clerk">Stock Clerk</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;" id="btn-submit-register">Create Account</button>
+      </form>
+      <div class="auth-links" style="justify-content: center; margin-top: 1.25rem;">
+        <span style="color: var(--text-dim); margin-right: 0.5rem;">Already have an account?</span>
+        <a href="javascript:void(0)" class="auth-link" onclick="Auth.showAuthForm('login')">Return to Sign In</a>
+      </div>
+    </div>
+
+    <!-- Forgot Password Step 1 Form -->
+    <div class="auth-form-card" id="auth-form-forgot">
+      <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Reset Password via OTP</h3>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">Enter your registered email address to receive a 6-digit OTP verification code.</p>
+      
+      <form id="forgot-form">
+        <div class="form-group">
+          <label class="form-label" for="forgot-email">Registered Email</label>
+          <input type="email" id="forgot-email" class="form-input" placeholder="alex@stocksense.io" required value="alex@stocksense.io">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;" id="btn-send-otp">Send 6-Digit OTP</button>
+      </form>
+
+      <div class="auth-links" style="justify-content: center; margin-top: 1.25rem;">
+        <a href="javascript:void(0)" class="auth-link" onclick="Auth.showAuthForm('login')">&larr; Back to Sign In</a>
+      </div>
+    </div>
+
+    <!-- Forgot Password Step 2: OTP Verification & New Password -->
+    <div class="auth-form-card" id="auth-form-otp-verify">
+      <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">Verify 6-Digit OTP</h3>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">Enter the verification code sent to your email.</p>
+
+      <div class="simulated-inbox-alert" id="otp-simulated-box">
+        <!-- Rendered with generated OTP -->
+      </div>
+
+      <form id="otp-verify-form">
+        <div class="otp-input-group">
+          <input type="text" maxlength="1" class="otp-digit" required>
+          <input type="text" maxlength="1" class="otp-digit" required>
+          <input type="text" maxlength="1" class="otp-digit" required>
+          <input type="text" maxlength="1" class="otp-digit" required>
+          <input type="text" maxlength="1" class="otp-digit" required>
+          <input type="text" maxlength="1" class="otp-digit" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="otp-new-password">New Password</label>
+          <input type="password" id="otp-new-password" class="form-input" placeholder="Enter new password" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="otp-confirm-password">Confirm New Password</label>
+          <input type="password" id="otp-confirm-password" class="form-input" placeholder="Repeat new password" required>
+        </div>
+
+        <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 0.5rem;" id="btn-confirm-reset-pwd">Verify & Reset Password</button>
+      </form>
+
+      <div class="auth-links" style="justify-content: center; margin-top: 1.25rem;">
+        <a href="javascript:void(0)" class="auth-link" onclick="Auth.showAuthForm('login')">&larr; Cancel and Return to Sign In</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. PRODUCT ADD/EDIT MODAL -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3 id="product-modal-title">Add New Product</h3>
+      <button type="button" class="modal-close-btn" onclick="App.closeModal('product-modal')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <form id="product-form">
+      <div class="modal-body">
+        <input type="hidden" id="prod-id">
+        <div class="form-group">
+          <label class="form-label" for="prod-name">Product Name *</label>
+          <input type="text" id="prod-name" class="form-input" placeholder="e.g. Servo Motor 750W" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="prod-sku">SKU Code *</label>
+            <div class="sku-input-wrapper">
+              <input type="text" id="prod-sku" class="form-input" placeholder="ELEC-101" required style="font-family: var(--font-mono);">
+              <button type="button" class="btn btn-secondary btn-generate-sku" id="btn-generate-sku" title="Generate SKU">Auto SKU</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prod-category">Category *</label>
+            <select id="prod-category" class="form-select" required></select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="prod-unit">Unit of Measure *</label>
+            <select id="prod-unit" class="form-select" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prod-stock">Initial Stock Intake</label>
+            <input type="number" id="prod-stock" class="form-input" min="0" value="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prod-reorder">Reorder Threshold *</label>
+            <input type="number" id="prod-reorder" class="form-input" min="1" value="25" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="prod-cost">Unit Cost ($) *</label>
+            <input type="number" step="0.01" id="prod-cost" class="form-input" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prod-price">Retail Selling Price ($)</label>
+            <input type="number" step="0.01" id="prod-price" class="form-input" placeholder="0.00">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="prod-warehouse">Default Warehouse *</label>
+            <select id="prod-warehouse" class="form-select"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prod-location">Storage Location / Rack</label>
+            <select id="prod-location" class="form-select"></select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="prod-desc">Description & Technical Specs</label>
+          <textarea id="prod-desc" class="form-textarea" rows="2" placeholder="Product specifications, dimensions, supplier references..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="App.closeModal('product-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btn-save-product">Save Product</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 3. BARCODE PREVIEW MODAL -->
+<div class="modal-overlay" id="barcode-modal">
+  <div class="modal-container" style="max-width: 480px;">
+    <div class="modal-header">
+      <h3>Product Barcode Label</h3>
+      <button type="button" class="modal-close-btn" onclick="App.closeModal('barcode-modal')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="barcode-modal-content">
+      <!-- Injected by products.js -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="App.closeModal('barcode-modal')">Close</button>
+      <button type="button" class="btn btn-primary" onclick="window.print()">Print Label</button>
+    </div>
+  </div>
+</div>
+
+<!-- 4. WAREHOUSE ADD MODAL -->
+<div class="modal-overlay" id="warehouse-modal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3 id="warehouse-modal-title">Add Warehouse Facility</h3>
+      <button type="button" class="modal-close-btn" onclick="App.closeModal('warehouse-modal')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <form id="warehouse-form">
+      <div class="modal-body">
+        <input type="hidden" id="wh-id">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="wh-code">Warehouse Code *</label>
+            <input type="text" id="wh-code" class="form-input" placeholder="e.g. WH-HYD-04" required style="font-family: var(--font-mono);">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="wh-name">Facility Name *</label>
+            <input type="text" id="wh-name" class="form-input" placeholder="e.g. Hyderabad Tech Hub" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="wh-city">City & State *</label>
+            <input type="text" id="wh-city" class="form-input" placeholder="e.g. Hyderabad, TS" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="wh-capacity">Total Capacity (Units) *</label>
+            <input type="number" id="wh-capacity" class="form-input" min="100" value="10000" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="wh-manager">Assigned Facility Manager</label>
+          <input type="text" id="wh-manager" class="form-input" placeholder="e.g. Alex Morgan" value="Alex Morgan">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="wh-address">Physical Street Address</label>
+          <textarea id="wh-address" class="form-textarea" rows="2" placeholder="Industrial park, plot, postal code..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="App.closeModal('warehouse-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btn-save-warehouse">Save Facility</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 5. LOCATION ADD MODAL -->
+<div class="modal-overlay" id="location-modal">
+  <div class="modal-container" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3>Add Storage Zone / Bin</h3>
+      <button type="button" class="modal-close-btn" onclick="App.closeModal('location-modal')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <form id="location-form">
+      <div class="modal-body">
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Adding zone to: <strong id="loc-wh-title" style="color: var(--primary);">Central Bangalore Hub</strong>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="loc-code">Location / Bin Code *</label>
+          <input type="text" id="loc-code" class="form-input" placeholder="e.g. ZONE-D-COLD" required style="font-family: var(--font-mono);">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="loc-name">Zone Description *</label>
+          <input type="text" id="loc-name" class="form-input" placeholder="e.g. Refrigerated Cleanroom Rack 4" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="loc-capacity">Bin Capacity (Units)</label>
+          <input type="number" id="loc-capacity" class="form-input" min="10" value="1500">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="App.closeModal('location-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btn-save-location">Add Zone</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 6. INWARD RECEIPT MODAL -->
+<div class="modal-overlay" id="receipt-modal">
+  <div class="modal-container" style="max-width: 820px;">
+    <div class="modal-header">
+      <h3>Create Inward Goods Receipt (Purchase Stock-In)</h3>
+      <button type="button" class="modal-close-btn" onclick="App.closeModal('receipt-modal')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <form id="receipt-form">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="receipt-number">Receipt Reference # *</label>
+            <input type="text" id="receipt-number" class="form-input" required style="font-family: var(--font-mono);">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="receipt-supplier">Supplier / Vendor *</label>
+            <input type="text" id="receipt-supplier" class="form-input" placeholder="e.g. Precision Drive Systems" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="receipt-ref">Purchase Order PO #</label>
+            <input type="text" id="receipt-ref" class="form-input" placeholder="e.g. PO-8921">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="receipt-warehouse">Destination Warehouse *</label>
+            <select id="receipt-warehouse" class="form-select"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="receipt-location">Destination Bay / Zone</label>
+            <select id="receipt-location" class="form-select"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="receipt-date">Receipt Date *</label>
+            <input type="date" id="receipt-date" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="receipt-status">Initial Status</label>
+            <select id="receipt-status" class="form-select">
+              <option value="Draft">Draft (Not Yet Counted)</option>
+              <option value="Pending Inspection">Pending Inspection</option>
+              <option value="Received">Received (Immediate Stock-In)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Line items section -->
+        <div style="margin: 1.5rem 0 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+          <h4 style="font-size: 0.95rem; font-weight: 700;">Inward Products & Quantities</h4>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-add-line-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Item
+          </button>
+        </div>
+
+        <table class="line-items-table">
+          <thead>
+            <tr>
+              <th>Product Selection</th>
+              <th>Quantity</th>
+              <th>Unit Cost ($)</th>
+              <th>Line Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="receipt-line-items-body">
+            <!-- Line items injected via receipts.js -->
+          </tbody>
+        </table>
+
+        <div class="receipt-summary-box">
+          <div>
+            <div class="summary-stat-label">Total Units Inward</div>
+            <div class="summary-stat-val" id="receipt-summary-qty">0</div>
+          </div>
+          <div>
+            <div class="summary-stat-label">Total Valuation ($)</div>
+            <div class="summary-stat-val" style="color: var(--emerald);" id="receipt-summary-amt">$0.00</div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="receipt-notes">Inspection Notes / Carrier Tracking</label>
+          <input type="text" id="receipt-notes" class="form-input" placeholder="Carrier name, tracking number, condition check notes...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="App.closeModal('receipt-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btn-save-receipt">Record Inward Receipt</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 7. RECEIPT SLIP PREVIEW MODAL -->
+<div class="modal-overlay" id="slip-modal">
+  <div class="modal-container" style="max-width: 720px;">
+    <div class="modal-header">
+      <h3>Inward Goods Slip Note</h3>
+      <button type="button" class="modal-close-btn" onclick="App.closeModal('slip-modal')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="slip-modal-content">
+      <!-- Injected by receipts.js -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="App.closeModal('slip-modal')">Close</button>
+      <button type="button" class="btn btn-primary" onclick="window.print()">Print Slip</button>
+    </div>
+  </div>
+</div>
+
+<!-- 8. DELIVERY ORDER MODAL -->
+<div class="modal-overlay" id="delivery-modal">
+  <div class="modal-container" style="max-width: 820px;">
+    <div class="modal-header">
+      <h3>Create Customer Delivery Order</h3>
+      <button type="button" class="modal-close-btn" onclick="App.closeModal('delivery-modal')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <form id="delivery-form">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="del-number">Order # *</label>
+            <input type="text" id="del-number" class="form-input" required style="font-family: var(--font-mono);">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="del-customer">Customer / Client *</label>
+            <input type="text" id="del-customer" class="form-input" placeholder="e.g. Tesla Gigafactory India" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="del-address">Destination Delivery Address *</label>
+            <input type="text" id="del-address" class="form-input" placeholder="Delivery street address, bay number..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="del-warehouse">Fulfillment Warehouse</label>
+            <select id="del-warehouse" class="form-select">
+              <option value="wh-blr-01">Central Bangalore Hub (WH-BLR-01)</option>
+              <option value="wh-del-02">Northern Distribution Depot (WH-DEL-02)</option>
+              <option value="wh-mum-03">Western Transit Terminal (WH-MUM-03)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin: 1.5rem 0 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+          <h4 style="font-size: 0.95rem; font-weight: 700;">Ordered Line Items (Stock Pre-Check Active)</h4>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-add-del-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Product Item
+          </button>
+        </div>
+
+        <table class="line-items-table">
+          <thead>
+            <tr>
+              <th>Select Available Product</th>
+              <th>Quantity (Max Stock)</th>
+              <th>Unit Price</th>
+              <th>Line Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="delivery-line-items-body">
+            <!-- Line items injected via deliveries.js -->
+          </tbody>
+        </table>
+
+        <div class="receipt-summary-box">
+          <div>
+            <div class="summary-stat-label">Total Outbound Units</div>
+            <div class="summary-stat-val" id="del-summary-qty">0</div>
+          </div>
+          <div>
+            <div class="summary-stat-label">Total Order Value ($)</div>
+            <div class="summary-stat-val" style="color: var(--emerald);" id="del-summary-amt">$0.00</div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="del-notes">Fulfillment Instructions & Shipping Notes</label>
+          <input type="text" id="del-notes" class="form-input" placeholder="Priority delivery instructions, carrier booking...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="App.closeModal('delivery-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btn-save-delivery">Create Order (Draft)</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 9. INTERNAL TRANSFER MODAL -->
+<div class="modal-overlay" id="transfer-modal">
+  <div class="modal-container" style="max-width: 720px;">
+    <div class="modal-header">
+      <h3>Initiate Internal Stock Transfer</h3>
+      <button type="button" class="modal-close-btn" onclick="App.closeModal('transfer-modal')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <form id="transfer-form">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="transfer-number">Transfer # *</label>
+            <input type="text" id="transfer-number" class="form-input" required style="font-family: var(--font-mono);">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="transfer-source-wh">Source Facility *</label>
+            <select id="transfer-source-wh" class="form-select"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="transfer-dest-wh">Destination Facility *</label>
+            <select id="transfer-dest-wh" class="form-select"></select>
+          </div>
+        </div>
+
+        <div style="margin: 1.25rem 0 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+          <h4 style="font-size: 0.95rem; font-weight: 700;">Transfer Products & Quantities</h4>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-add-transfer-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Transfer Item
+          </button>
+        </div>
+
+        <table class="line-items-table">
+          <thead>
+            <tr>
+              <th>Select Product</th>
+              <th>Relocation Quantity</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="transfer-line-items-body">
+            <!-- Injected via transfers.js -->
+          </tbody>
+        </table>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label" for="transfer-notes">Relocation Reason / Manifest Notes</label>
+          <input type="text" id="transfer-notes" class="form-input" placeholder="e.g. Stock rebalance for regional demand spike...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="App.closeModal('transfer-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btn-save-transfer">Create Transfer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 10. INVENTORY ADJUSTMENT MODAL -->
+<div class="modal-overlay" id="adjustment-modal">
+  <div class="modal-container" style="max-width: 600px;">
+    <div class="modal-header">
+      <h3>Record Physical Inventory Count Adjustment</h3>
+      <button type="button" class="modal-close-btn" onclick="App.closeModal('adjustment-modal')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <form id="adjustment-form">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="adj-number">Audit Reference # *</label>
+            <input type="text" id="adj-number" class="form-input" required style="font-family: var(--font-mono);">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="adj-warehouse">Warehouse Facility *</label>
+            <select id="adj-warehouse" class="form-select"></select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="adj-product">Select Product to Reconcile *</label>
+          <select id="adj-product" class="form-select" required></select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="adj-system-qty">Current System Stock</label>
+            <input type="number" id="adj-system-qty" class="form-input" disabled style="opacity: 0.7;">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="adj-counted-qty">Physical Counted Quantity *</label>
+            <input type="number" id="adj-counted-qty" class="form-input" min="0" required>
+          </div>
+        </div>
+
+        <div style="margin: 0.75rem 0 1rem; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Computed Audit Variance:</span>
+          <span id="adj-variance-display" class="variance-zero">0 (Exact Match)</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="adj-reason">Audit Reason & Justification *</label>
+          <input type="text" id="adj-reason" class="form-input" placeholder="e.g. Cycle count discrepancy, damaged packaging, misplacement..." required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="App.closeModal('adjustment-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btn-save-adjustment">Apply & Reconcile Stock</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast Feedback Container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Scripts -->
+<script src="js/mockData.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/products.js"></script>
+<script src="js/warehouse.js"></script>
+<script src="js/receipts.js"></script>
+<script src="js/deliveries.js"></script>
+<script src="js/transfers.js"></script>
+<script src="js/adjustments.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

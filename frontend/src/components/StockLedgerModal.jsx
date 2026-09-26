@@ -33,7 +33,7 @@ export default function StockLedgerModal({ isOpen, onClose }) {
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <h2>Stock Ledger & Movement Audit Trail</h2>
-            <span className="member-chip" style={{ fontSize: '0.7rem' }}>Shared: feature/shared/stock-ledger</span>
+            <span className="member-chip" style={{ fontSize: '0.7rem' }}>Immutable Audit Ledger</span>
           </div>
           <button className="modal-close-btn" onClick={onClose}>&times;</button>
         </div>

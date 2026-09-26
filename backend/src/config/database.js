@@ -89,10 +89,74 @@ function initSchema(db) {
       packed_quantity INTEGER NOT NULL DEFAULT 0
     );
 
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'Inventory Manager',
+      avatar TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS purchase_receipts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      receipt_number TEXT UNIQUE NOT NULL,
+      supplier_name TEXT NOT NULL,
+      supplier_ref TEXT,
+      warehouse_id INTEGER NOT NULL REFERENCES warehouses(id),
+      status TEXT NOT NULL DEFAULT 'DRAFT' CHECK (status IN ('DRAFT', 'CHECKED', 'RECEIVED', 'CANCELLED')),
+      total_amount REAL DEFAULT 0,
+      notes TEXT,
+      received_at DATETIME,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS purchase_receipt_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      receipt_id INTEGER NOT NULL REFERENCES purchase_receipts(id) ON DELETE CASCADE,
+      product_id INTEGER NOT NULL REFERENCES products(id),
+      quantity_ordered INTEGER NOT NULL CHECK (quantity_ordered > 0),
+      quantity_received INTEGER NOT NULL DEFAULT 0,
+      unit_cost REAL NOT NULL DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS internal_transfers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      transfer_number TEXT UNIQUE NOT NULL,
+      source_warehouse_id INTEGER NOT NULL REFERENCES warehouses(id),
+      destination_warehouse_id INTEGER NOT NULL REFERENCES warehouses(id),
+      status TEXT NOT NULL DEFAULT 'DRAFT' CHECK (status IN ('DRAFT', 'IN_TRANSIT', 'COMPLETED', 'CANCELLED')),
+      notes TEXT,
+      dispatched_at DATETIME,
+      completed_at DATETIME,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS internal_transfer_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      transfer_id INTEGER NOT NULL REFERENCES internal_transfers(id) ON DELETE CASCADE,
+      product_id INTEGER NOT NULL REFERENCES products(id),
+      quantity INTEGER NOT NULL CHECK (quantity > 0)
+    );
+
+    CREATE TABLE IF NOT EXISTS inventory_adjustments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      adjustment_number TEXT UNIQUE NOT NULL,
+      product_id INTEGER NOT NULL REFERENCES products(id),
+      warehouse_id INTEGER NOT NULL REFERENCES warehouses(id),
+      system_quantity INTEGER NOT NULL,
+      counted_quantity INTEGER NOT NULL,
+      variance INTEGER NOT NULL,
+      reason TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'APPLIED' CHECK (status IN ('PENDING', 'APPLIED', 'REJECTED')),
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE TABLE IF NOT EXISTS stock_ledger (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       product_id INTEGER NOT NULL REFERENCES products(id),
-      movement_type TEXT NOT NULL CHECK (movement_type IN ('DELIVERY', 'RECEIPT', 'TRANSFER', 'ADJUSTMENT')),
+      movement_type TEXT NOT NULL CHECK (movement_type IN ('DELIVERY', 'RECEIPT', 'TRANSFER', 'ADJUSTMENT', 'INITIAL_STOCK')),
       reference_type TEXT NOT NULL,
       reference_id INTEGER NOT NULL,
       quantity_change INTEGER NOT NULL,
