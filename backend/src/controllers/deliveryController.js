@@ -241,3 +241,159 @@ exports.packDelivery = (req, res, next) => {
     next(err);
   }
 };
+
+exports.validateDelivery = (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const order = DeliveryOrder.findById(id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        error: `Delivery order with ID ${id} not found`
+      });
+    }
+
+    if (order.status === 'VALIDATED') {
+      return res.status(400).json({
+        success: false,
+        error: `Delivery order ${order.order_number} has already been validated and fulfilled`
+      });
+    }
+
+    if (order.status === 'DRAFT') {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot validate order: order is in 'DRAFT' status. You must pick and pack the items before validating.`
+      });
+    }
+
+    if (order.status === 'PICKED') {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot validate order: order is in 'PICKED' status. You must pack the items before validating.`
+      });
+    }
+
+    if (order.status !== 'PACKED') {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot validate order: order status must be 'PACKED', but is '${order.status}'`
+      });
+    }
+
+    if (!order.items || order.items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot validate order: no line items found in delivery order`
+      });
+    }
+
+    // Pre-validation of quantities and stock
+    const db = require('../config/database').getDatabase();
+    for (const item of order.items) {
+      if (item.packed_quantity <= 0) {
+        return res.status(400).json({
+          success: false,
+          error: `Item "${item.product_name}" has packed quantity of ${item.packed_quantity}. All items must be packed before validation.`
+        });
+      }
+
+      // Check current stock in database
+      const currentProduct = db.prepare('SELECT id, name, sku, current_stock FROM products WHERE id = ?').get(item.product_id);
+      if (!currentProduct) {
+        return res.status(404).json({
+          success: false,
+          error: `Product ID ${item.product_id} not found during validation`
+        });
+      }
+
+      if (currentProduct.current_stock < item.requested_quantity) {
+        return res.status(409).json({
+          success: false,
+          error: `Cannot validate order: Insufficient stock for product "${currentProduct.name}" (SKU: ${currentProduct.sku}). Required: ${item.requested_quantity}, Current Stock: ${currentProduct.current_stock}`
+        });
+      }
+    }
+
+    // Perform database transaction to deduct stock, write stock ledger entries, and update order status
+    const ledgerEntries = [];
+    const now = new Date().toISOString();
+
+    db.exec('BEGIN TRANSACTION;');
+    try {
+      for (const item of order.items) {
+        // Re-read with row lock semantics in transaction
+        const product = db.prepare('SELECT id, name, sku, current_stock FROM products WHERE id = ?').get(item.product_id);
+        
+        if (product.current_stock < item.requested_quantity) {
+          throw new Error(`Insufficient stock for product "${product.name}". Required: ${item.requested_quantity}, Available: ${product.current_stock}`);
+        }
+
+        const quantityBefore = product.current_stock;
+        const quantityAfter = quantityBefore - item.requested_quantity;
+
+        // 1. Decrease stock in products table
+        const updateProduct = db.prepare(`
+          UPDATE products 
+          SET current_stock = ?, updated_at = CURRENT_TIMESTAMP 
+          WHERE id = ?
+        `);
+        updateProduct.run(quantityAfter, item.product_id);
+
+        // 2. Insert stock ledger movement record
+        const insertLedger = db.prepare(`
+          INSERT INTO stock_ledger (
+            product_id, movement_type, reference_type, reference_id,
+            quantity_change, quantity_before, quantity_after, timestamp, notes
+          ) VALUES (?, 'DELIVERY', 'DELIVERY_ORDER', ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
+        `);
+        const ledgerResult = insertLedger.run(
+          item.product_id,
+          order.id,
+          -item.requested_quantity,
+          quantityBefore,
+          quantityAfter,
+          `Delivery Order ${order.order_number} validated & fulfilled for customer: ${order.customer_name}`
+        );
+
+        ledgerEntries.push({
+          id: Number(ledgerResult.lastInsertRowid),
+          product_id: item.product_id,
+          product_name: product.name,
+          quantity_change: -item.requested_quantity,
+          quantity_before: quantityBefore,
+          quantity_after: quantityAfter
+        });
+      }
+
+      // 3. Update delivery order status to VALIDATED
+      const updateOrder = db.prepare(`
+        UPDATE delivery_orders 
+        SET status = 'VALIDATED', validated_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP 
+        WHERE id = ?
+      `);
+      updateOrder.run(order.id);
+
+      db.exec('COMMIT;');
+    } catch (txError) {
+      db.exec('ROLLBACK;');
+      return res.status(409).json({
+        success: false,
+        error: txError.message || 'Transaction failed while updating inventory'
+      });
+    }
+
+    const updatedOrder = DeliveryOrder.findById(id);
+    res.json({
+      success: true,
+      message: `Delivery order ${order.order_number} successfully validated! Inventory updated and stock ledger movements created.`,
+      data: {
+        order: updatedOrder,
+        movements: ledgerEntries
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
