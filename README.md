@@ -32,22 +32,50 @@ StockSense System
 
 ---
 
-## Feature Modules & Git Branch Structure
+## Team Members & Responsibilities
 
-The project is structured into modular feature branches enabling parallel development across key functional areas:
+The StockSense platform is collaboratively engineered by two primary team members with dedicated feature ownership and shared integration modules:
 
-| Module / Area | Feature Branch | Scope & Responsibilities |
-|---|---|---|
-| **Authentication & Access** | `feature/member1/authentication` | User registration, login, JWT/session management, and protected routes |
-| **Product Management** | `feature/member1/products` | SKU catalog, product categories, pricing, unit definitions, and stock levels |
-| **Inbound Receipts** | `feature/member1/receipts` | Supplier purchase receipts, shipment inspection, receiving, and stock increment |
-| **Warehouse Infrastructure** | `feature/member1/warehouse` | Multi-warehouse management, storage zones, locations, and aisle mapping |
-| **Delivery Orders** | `feature/member2/deliveries` | Customer fulfillment workflow: Order creation, Pick, Pack, Validate, and stock deduction |
-| **Internal Transfers** | `feature/member2/transfers` | Inter-warehouse and inter-location stock relocations with transit tracking |
-| **Stock Adjustments** | `feature/member2/adjustments` | Inventory cycle counting, physical audits, shrinkage write-offs, and corrections |
-| **Analytics Dashboard** | `feature/member2/dashboard` | Real-time KPI metrics, low-stock alerts, turnover rates, and operational stats |
-| **Stock Ledger (Shared)** | `feature/shared/stock-ledger` | Immutable audit log recording every inventory movement across all modules |
-| **System Integration** | `feature/shared/integration` | End-to-end integration, unified routing, shared middleware, and deployment |
+### 👤 Member 1: Umesh Reddy
+- **Core Domain**: Inbound Logistics, Product Catalog, Warehouse Infrastructure & System Security
+- **Assigned Feature Branches & Work**:
+  - `feature/member1/authentication`: User registration, login, JWT token issuance, session management, and protected API route middleware.
+  - `feature/member1/products`: Product catalog management, SKU definitions, categories, unit measurements, and base product inventory attributes.
+  - `feature/member1/receipts`: Inbound supplier receipts pipeline (`Draft` → `Check` → `Receive` → `Stock Increment` → `Stock Ledger Movement`).
+  - `feature/member1/warehouse`: Multi-facility warehouse configuration, storage zones, location codes, and bin/shelf management.
+
+---
+
+### 👤 Member 2: Jishnu
+- **Core Domain**: Outbound Fulfillment, Internal Relocations, Stock Reconciliation & Analytics
+- **Assigned Feature Branches & Work**:
+  - `feature/member2/deliveries`: Outbound delivery order workflow (`Draft` → `Pick` → `Pack` → `Validate` → `Stock Decrement` → `Stock Ledger Movement`), stock availability validation, and customer order management (*Implemented & Verified*).
+  - `feature/member2/transfers`: Internal warehouse transfers, inter-facility relocation requests, dispatch in-transit status, and destination receipt verification.
+  - `feature/member2/adjustments`: Inventory cycle counts, variance detection, damaged/lost goods write-offs, and reconciliation adjustments.
+  - `feature/member2/dashboard`: Real-time warehouse analytics dashboard, KPI summary metrics, inventory turnover, low-stock warnings, and activity monitors.
+
+---
+
+### 🤝 Collaborative Shared Modules
+- `feature/shared/stock-ledger`: Centralized immutable audit ledger recording every inventory delta with before/after balances.
+- `feature/shared/integration`: End-to-end integration testing, unified routing, API gateway middleware, and deployment configuration.
+
+---
+
+## Feature Modules & Git Branch Matrix
+
+| Feature Area | Assigned Developer | Git Branch | Operational Scope |
+|---|---|---|---|
+| **Authentication & Access** | **Umesh Reddy** (Member 1) | `feature/member1/authentication` | User login, JWT sessions, route guards |
+| **Product Management** | **Umesh Reddy** (Member 1) | `feature/member1/products` | SKU catalog, product categories, pricing, unit definitions |
+| **Inbound Receipts** | **Umesh Reddy** (Member 1) | `feature/member1/receipts` | Supplier purchase receipts, shipment inspection, stock increment |
+| **Warehouse Infrastructure** | **Umesh Reddy** (Member 1) | `feature/member1/warehouse` | Multi-warehouse management, storage zones, locations, and aisle mapping |
+| **Delivery Orders** | **Jishnu** (Member 2) | `feature/member2/deliveries` | Customer fulfillment: Pick, Pack, Validate, stock deduction *(Completed)* |
+| **Internal Transfers** | **Jishnu** (Member 2) | `feature/member2/transfers` | Inter-warehouse stock relocations with transit tracking |
+| **Stock Adjustments** | **Jishnu** (Member 2) | `feature/member2/adjustments` | Inventory cycle counting, physical audits, shrinkage write-offs |
+| **Analytics Dashboard** | **Jishnu** (Member 2) | `feature/member2/dashboard` | Real-time KPI metrics, low-stock alerts, turnover rates, operational stats |
+| **Stock Ledger (Shared)** | **Collaborative** | `feature/shared/stock-ledger` | Immutable audit log recording every inventory movement across all modules |
+| **System Integration** | **Collaborative** | `feature/shared/integration` | End-to-end integration, unified routing, shared middleware, and deployment |
 
 ---
 
